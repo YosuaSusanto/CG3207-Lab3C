@@ -63,9 +63,11 @@ Port (CLK						:	in STD_LOGIC;
 		IDEX_Flush				:	in STD_LOGIC;
 		IDEX_Stall				:	in STD_LOGIC;
 		IDEX_BranchIn			:	in STD_LOGIC;
-		IDEX_ALUOpIn			:  in STD_LOGIC_VECTOR(1 downto 0);
+		IDEX_ALUOpIn			:  in STD_LOGIC_VECTOR(2 downto 0);
 		IDEX_MemreadIn			:  in STD_LOGIC;
 		IDEX_MemtoRegIn		:	in STD_LOGIC;
+		IDEX_InstrtoRegIn		:	in STD_LOGIC;
+		IDEX_PCtoRegIn			:  in STD_LOGIC;
 		IDEX_MemwriteIn		:  in STD_LOGIC;
 		IDEX_ALUSrcIn			:	in STD_LOGIC;
 		IDEX_RegDstIn			:	in STD_LOGIC;
@@ -79,9 +81,11 @@ Port (CLK						:	in STD_LOGIC;
 		IDEX_SignExtendedIn	:	in STD_LOGIC_VECTOR(31 downto 0);
 		
 		IDEX_BranchOut			:	out STD_LOGIC;
-		IDEX_ALUOpOut			:  out STD_LOGIC_VECTOR(1 downto 0);
+		IDEX_ALUOpOut			:  out STD_LOGIC_VECTOR(2 downto 0);
 		IDEX_MemreadOut		:  out STD_LOGIC;
 		IDEX_MemtoRegOut		:	out STD_LOGIC;
+		IDEX_InstrtoRegOut	:	out STD_LOGIC;
+		IDEX_PCtoRegOut		:	out STD_LOGIC;
 		IDEX_MemwriteOut		:  out STD_LOGIC;
 		IDEX_ALUSrcOut			: 	out STD_LOGIC;
 		IDEX_RegDstOut			:	out STD_LOGIC;
@@ -103,9 +107,11 @@ begin
 	if rising_edge(CLK) then
 		if IDEX_Flush = '1' then
 			IDEX_BranchOut			<= '0';
-			IDEX_ALUOpOut			<= "00";
+			IDEX_ALUOpOut			<= "000";
 			IDEX_MemreadOut		<= '0';
 			IDEX_MemtoRegOut		<= '0';
+			IDEX_InstrtoRegOut	<= '0';
+			IDEX_PCtoRegOut		<= '0';
 			IDEX_MemwriteOut		<= '0';
 			IDEX_ALUSrcOut			<= '0';
 			IDEX_RegDstOut			<= '0';
@@ -123,6 +129,8 @@ begin
 			IDEX_ALUOpOut			<= IDEX_ALUOpIn;
 			IDEX_MemreadOut		<= IDEX_MemreadIn;
 			IDEX_MemtoRegOut		<= IDEX_MemtoRegIn;
+			IDEX_InstrtoRegOut	<=	IDEX_InstrtoRegIn;
+			IDEX_PCtoRegOut		<= IDEX_PCtoRegIn;
 			IDEX_MemwriteOut		<= IDEX_MemwriteIn;
 			IDEX_ALUSrcOut			<= IDEX_ALUSrcIn;
 			IDEX_RegDstOut			<= IDEX_RegDstIn;
