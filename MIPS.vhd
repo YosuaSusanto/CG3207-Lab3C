@@ -632,7 +632,8 @@ PC_In <= Readdata1_Reg when ALUOp = "00" and Instr(5 downto 1) = "00100" else --
 -- Input for IFID
 IFID_PCPlus4In <= PCPlus4;
 IFID_InstrIn <= Instr;
-IFID_Flush <= Jump;
+IFID_Flush <= '1' when Jump = '1' or (ALUOp = "00" and Instr(5 downto 1) = "00100") else
+					'0';
 
 --end IF stage----------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------
