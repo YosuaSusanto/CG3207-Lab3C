@@ -632,7 +632,9 @@ PC_In <= Readdata1_Reg when ALUOp = "00" and Instr(5 downto 1) = "00100" else --
 -- Input for IFID
 IFID_PCPlus4In <= PCPlus4;
 IFID_InstrIn <= Instr;
-IFID_Flush <= '1' when Jump = '1' or (ALUOp = "00" and Instr(5 downto 1) = "00100") else
+IFID_Flush <= '1' when Jump = '1' or (ALUOp = "00" and Instr(5 downto 1) = "00100") or -- Flush when jumps (all kinds)
+							  (Branch = '1' and ALU_Status(0) = '1') or 								-- Flush when BEQ
+							   (Branch = '1' and ALU_Result1 = x"00000000") else					-- Flush when BGEZ/BGEZAL
 					'0';
 
 --end IF stage----------------------------------------------------------------------------------------------------------------
@@ -666,6 +668,9 @@ IDEX_ReadData1In <= ReadData1_Reg;
 IDEX_ReadData2In <= ReadData2_Reg;
 IDEX_SignExtendIn <= SignExtend;
 IDEX_SignExtendedIn <= SignEx_Out;
+IDEX_Flush <= '1' when (Branch = '1' and ALU_Status(0) = '1') or 				-- Flush when BEQ
+							  (Branch = '1' and ALU_Result1 = x"00000000") else	-- Flush when BGEZ/BGEZAL
+					'0';
 
 --end ID stage----------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------
@@ -729,6 +734,9 @@ EXMEM_ALUResult2In <= ALU_Result2;
 EXMEM_WriteDataMemIn <= IDEX_ReadData2Out;	-- Need to modify for MEM forwarding
 EXMEM_WriteAddrRegIn <= IDEX_RegRtOut when IDEX_RegDstOut = '0' else
 								IDEX_RegRdOut;
+EXMEM_Flush <= '1' when (Branch = '1' and ALU_Status(0) = '1') or 			-- Flush when BEQ
+							   (Branch = '1' and ALU_Result1 = x"00000000") else	-- Flush when BGEZ/BGEZAL
+					'0';
 
 ---end EX stage---------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------
