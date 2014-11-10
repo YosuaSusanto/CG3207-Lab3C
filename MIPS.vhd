@@ -638,10 +638,9 @@ PCPlus4 <= PC_out + 4 when ALU_Status(2) = '0' else
 Addr_Instr <= PC_out;
 
 -- Input for PC
-PC_In <= Readdata1_Reg when ALUOp = "00" and Instr(5 downto 1) = "00100" else -- JR, JALR
-			(PCPlus4(31 downto 28) & Instr(25 downto 0) & "00") when Jump = '1' else
-			PCPlus4 + (SignEx_out(29 downto 0) & "00") when Branch = '1' and ALU_Status(0) = '1' else
-			PCPlus4 + (SignEx_out(29 downto 0) & "00") when Branch = '1' and ALU_Result1 = x"00000000" else -- bgez
+PC_In <= Readdata1_Reg when ALUOp = "00" and IFID_InstrOut(5 downto 1) = "00100" else -- JR, JALR
+			(IFID_PCPlus4Out(31 downto 28) & IFID_InstrOut(25 downto 0) & "00") when Jump = '1' else
+			EXMEM_BranchTargetOut when EXMEM_BranchOut = '1' and EXMEM_ALUZeroOut = '1' else
 			PCPlus4;			
 
 -- Input for IFID
