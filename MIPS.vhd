@@ -728,18 +728,23 @@ PCPlus4 <= PC_out + 4 when ALU_Status(2) = '0' else
 Addr_Instr <= PC_out;
 
 -- Input for PC
-PC_In <= Readdata1_Reg when ALUOp = "010" and IFID_InstrOut(5 downto 1) = "00100" else -- JR, JALR
-			(IFID_PCPlus4Out(31 downto 28) & IFID_InstrOut(25 downto 0) & "00") when Jump = '1' else
-			EXMEM_BranchTargetOut when EXMEM_BranchOut = '1' and EXMEM_ALUZeroOut = '1' else
-			PCPlus4;			
+PC_In <= Readdata1_Reg when ALUOp = "010" and IFID_InstrOut(5 downto 1) = "00100" else 				-- JR, JALR - ID state
+			(IFID_PCPlus4Out(31 downto 28) & IFID_InstrOut(25 downto 0) & "00") when Jump = '1' else	-- Occurs in ID state
+			EXMEM_BranchTargetOut when EXMEM_BranchOut = '1' and EXMEM_ALUZeroOut = '1' else				-- Occurs in MEM state
+			PCPlus4;
+
+-- Handle Flush and Stall
+IFID_Flush <= '1' when Jump = '1' or (ALUOp = "010" and Instr(5 downto 1) = "00100") or	-- Flush when jumps (all kinds)
+							  (EXMEM_BranchOut = '1' and EXMEM_ALUZeroOut = '1') else				-- Flush when BEQ
+					'0';	
+IDEX_Flush <= '1' when (EXMEM_BranchOut = '1' and EXMEM_ALUZeroOut = '1') else 				-- Flush when BEQ
+					'0';
+EXMEM_Flush <= '1' when (EXMEM_BranchOut = '1' and EXMEM_ALUZeroOut = '1') else 				-- Flush when BEQ
+					'0';					
 
 -- Input for IFID
 IFID_PCPlus4In <= PCPlus4;
 IFID_InstrIn <= Instr;
-IFID_Flush <= '1' when Jump = '1' or (ALUOp = "00" and Instr(5 downto 1) = "00100") or -- Flush when jumps (all kinds)
-							  (Branch = '1' and ALU_Status(0) = '1') or 								-- Flush when BEQ
-							   (Branch = '1' and ALU_Result1 = x"00000000") else					-- Flush when BGEZ/BGEZAL
-					'0';
 
 --end IF stage----------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------
@@ -774,9 +779,6 @@ IDEX_ReadData2In <= ReadData2_Reg;
 IDEX_SignExtendIn <= SignExtend;
 IDEX_SignExtendedIn <= SignEx_Out;
 IDEX_RegwriteIn <= CURegwrite;
-IDEX_Flush <= '1' when (Branch = '1' and ALU_Status(0) = '1') or 				-- Flush when BEQ
-							  (Branch = '1' and ALU_Result1 = x"00000000") else	-- Flush when BGEZ/BGEZAL
-					'0';
 
 --end ID stage----------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------
@@ -856,9 +858,6 @@ EXMEM_WriteAddrRegIn <= "11111" when IDEX_PCtoRegOut = '1' or
 												(IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "001001") else	--jalr
 								IDEX_RegRtOut when IDEX_RegDstOut = '0' else
 								IDEX_RegRdOut;
-EXMEM_Flush <= '1' when (IDEX_BranchOut = '1' and ALU_Status(0) = '1') or 			-- Flush when BEQ
-							   (IDEX_BranchOut = '1' and ALU_Result1 = x"00000000") else	-- Flush when BGEZ/BGEZAL
-					'0';
 EXMEM_RegwriteIn <= IDEX_RegwriteOut;
 
 ---end EX stage---------------------------------------------------------------------------------------------------------------
