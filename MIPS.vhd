@@ -796,8 +796,8 @@ FW_MEMWBRegRd <= MEMWB_WriteAddrRegOut;
 ForwardData1 <= IDEX_ReadData1Out when ForwardA = "00" else
 					EXMEM_ALUResult1Out when ForwardA = "10" else
 					WriteData_Reg;
-ForwardData2 <= IDEX_ReadData2Out when ForwardA = "00" else
-					EXMEM_ALUResult1Out when ForwardA = "10" else
+ForwardData2 <= IDEX_ReadData2Out when ForwardB = "00" else
+					EXMEM_ALUResult1Out when ForwardB = "10" else
 					WriteData_Reg;
 
 ALU_InA <= ForwardData2 when (IDEX_ALUOpOut = "010" and 
