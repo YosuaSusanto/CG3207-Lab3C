@@ -30,22 +30,21 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity ForwardUnit is
-    Port ( ALU_Result : in STD_LOGIC_VECTOR (31 downto 0);
-	        MEM_Result : in STD_LOGIC_VECTOR (31 downto 0);
-			  EXMEM_RegWrite : in  STD_LOGIC;
-			  EXMEM_RegRd : in  STD_LOGIC_VECTOR (4 downto 0);
-           MEMWB_RegWrite : in  STD_LOGIC;
-           MEMWB_RegRd : in  STD_LOGIC_VECTOR (4 downto 0);
-           IDEX_RegRs : in  STD_LOGIC_VECTOR (4 downto 0);
-           IDEX_RegRt : in  STD_LOGIC_VECTOR (4 downto 0);
-           ALU_InA : out  STD_LOGIC_VECTOR (31 downto 0);
-           ALU_InB : out  STD_LOGIC_VECTOR (31 downto 0));
+    Port (EXMEM_RegWrite	:	in STD_LOGIC;
+			 EXMEM_RegRd		:  in STD_LOGIC_VECTOR(31 downto 0);
+			 IDEX_RegRs			:  in STD_LOGIC_VECTOR(31 downto 0);
+			 IDEX_RegRt			:  in STD_LOGIC_VECTOR(31 downto 0);
+			 MEMWB_RegWrite	:  in STD_LOGIC;
+			 MEMWB_RegRd		:	 in STD_LOGIC;
+			 ForwardA			:  out STD_LOGIC_VECTOR(1 downto 0);
+			 ForwardB			:  out STD_LOGIC_VECTOR(1 downto 0);
+			 )
 end ForwardUnit;
 
 architecture Behavioral of ForwardUnit is
 
 begin
-	ALU_InA <= ALU_Result when (EXMEM_RegWrite = '1' and (EXMEM_RegRd /= "00000") and (EXMEM_RegRd = IDEX_RegRs)) else 
+	ForwardA <= "10" when (EXMEM_RegWrite = '1' and (EXMEM_RegRd /= "00000") and (EXMEM_RegRd = IDEX_RegRs)) else 
 					MEM_Result when (MEMWB_RegWrite = '1' and (MEMWB_RegRd /= "00000") and (EXMEM_RegRd /= IDEX_RegRs) 
 										and (MEMWB_RegRd = IDEX_RegRs)) else
 					x"00000000";

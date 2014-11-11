@@ -232,12 +232,22 @@ component MEM_WB is
 			MEMWB_ALUResult1In		:	in STD_LOGIC_VECTOR(31 downto 0);
 			MEMWB_ALUResult2In		:	in STD_LOGIC_VECTOR(31 downto 0);
 			MEMWB_WriteAddrRegIn		:	in STD_LOGIC_VECTOR(4 downto 0);
+			MEMWB_PCtoRegIn			:	in STD_LOGIC;
+			MEMWB_NextPCIn				:	in STD_LOGIC_VECTOR(31 downto 0);
+			MEMWB_ALUOPIn				:	in STD_LOGIC_VECTOR(2 downto 0);
+			MEMWB_Instr15to0In		:	in STD_LOGIC_VECTOR(15 downto 0);
+			MEMWB_InstrtoRegIn		:	in STD_LOGIC;
 			
 			MEMWB_MemtoRegOut			:	out STD_LOGIC;
 			MEMWB_MemReadDataOut		:	out STD_LOGIC_VECTOR(31 downto 0);
 			MEMWB_ALUResult1Out		:	out STD_LOGIC_VECTOR(31 downto 0);
 			MEMWB_ALUResult2Out		:	out STD_LOGIC_VECTOR(31 downto 0);
-			MEMWB_WriteAddrRegOut	:	out STD_LOGIC_VECTOR(4 downto 0)
+			MEMWB_WriteAddrRegOut	:	out STD_LOGIC_VECTOR(4 downto 0);
+			MEMWB_PCtoRegOut			:	out STD_LOGIC;
+			MEMWB_NextPCOut			:	out STD_LOGIC_VECTOR(31 downto 0);
+			MEMWB_ALUOPOut				:	out STD_LOGIC_VECTOR(2 downto 0);
+			MEMWB_Instr15to0Out		:	out STD_LOGIC_VECTOR(15 downto 0);
+			MEMWB_InstrtoRegOut		:	out STD_LOGIC
 			);
 end component;
 
@@ -402,12 +412,23 @@ end component;
 	signal	MEMWB_ALUResult1In		: STD_LOGIC_VECTOR(31 downto 0);
 	signal	MEMWB_ALUResult2In		: STD_LOGIC_VECTOR(31 downto 0);
 	signal	MEMWB_WriteAddrRegIn		: STD_LOGIC_VECTOR(4 downto 0);
+	signal 	MEMWB_PCtoRegIn			: STD_LOGIC;
+	signal	MEMWB_NextPCIn				: STD_LOGIC_VECTOR(31 downto 0);
+	signal	MEMWB_ALUOPIn				: STD_LOGIC_VECTOR(2 downto 0);
+	signal	MEMWB_Instr15to0In		: STD_LOGIC_VECTOR(15 downto 0);
+	signal	MEMWB_InstrtoRegIn		: STD_LOGIC;
+
 	
 	signal	MEMWB_MemtoRegOut			: STD_LOGIC;
 	signal	MEMWB_MemReadDataOut		: STD_LOGIC_VECTOR(31 downto 0);
 	signal	MEMWB_ALUResult1Out		: STD_LOGIC_VECTOR(31 downto 0);
 	signal	MEMWB_ALUResult2Out		: STD_LOGIC_VECTOR(31 downto 0);
 	signal	MEMWB_WriteAddrRegOut	: STD_LOGIC_VECTOR(4 downto 0);
+	signal 	MEMWB_PCtoRegOut			: STD_LOGIC;
+	signal	MEMWB_NextPCOut			: STD_LOGIC_VECTOR(31 downto 0);
+	signal	MEMWB_ALUOPOut				: STD_LOGIC_VECTOR(2 downto 0);
+	signal	MEMWB_Instr15to0Out		: STD_LOGIC_VECTOR(15 downto 0);
+	signal	MEMWB_InstrtoRegOut		: STD_LOGIC;
 
 ----------------------------------------------------------------	
 ----------------------------------------------------------------
@@ -616,12 +637,22 @@ MEM_WB1	:MEM_WB port map
 		MEMWB_ALUResult1In		=>	MEMWB_ALUResult1In,
 		MEMWB_ALUResult2In		=>	MEMWB_ALUResult2In,
 		MEMWB_WriteAddrRegIn		=>	MEMWB_WriteAddrRegIn,
+		MEMWB_PCtoRegIn			=> MEMWB_PCtoRegIn,
+		MEMWB_NextPCIn				=> MEMWB_NextPCIn,
+		MEMWB_ALUOPIn				=> MEMWB_ALUOPIn,
+		MEMWB_Instr15to0In		=> MEMWB_Instr15to0In,
+		MEMWB_InstrtoRegIn		=> MEMWB_InstrtoRegIn,
 		
 		MEMWB_MemtoRegOut			=> MEMWB_MemtoRegOut,
 		MEMWB_MemReadDataOut		=>	MEMWB_MemReadDataOut,
 		MEMWB_ALUResult1Out		=> MEMWB_ALUResult1Out,
 		MEMWB_ALUResult2Out		=>	MEMWB_ALUResult2Out,
-		MEMWB_WriteAddrRegOut	=>	MEMWB_WriteAddrRegOut
+		MEMWB_WriteAddrRegOut	=>	MEMWB_WriteAddrRegOut,
+		MEMWB_PCtoRegOut			=> MEMWB_PCtoRegOut,
+		MEMWB_NextPCOut			=> MEMWB_NextPCOut,
+		MEMWB_ALUOPOut				=> MEMWB_ALUOPOut,
+		MEMWB_Instr15to0Out		=> MEMWB_Instr15to0Out,
+		MEMWB_InstrtoRegOut		=> MEMWB_InstrtoRegOut
 		);
 		
 ----------------------------------------------------------------
@@ -638,7 +669,7 @@ PCPlus4 <= PC_out + 4 when ALU_Status(2) = '0' else
 Addr_Instr <= PC_out;
 
 -- Input for PC
-PC_In <= Readdata1_Reg when ALUOp = "00" and IFID_InstrOut(5 downto 1) = "00100" else -- JR, JALR
+PC_In <= Readdata1_Reg when ALUOp = "010" and IFID_InstrOut(5 downto 1) = "00100" else -- JR, JALR
 			(IFID_PCPlus4Out(31 downto 28) & IFID_InstrOut(25 downto 0) & "00") when Jump = '1' else
 			EXMEM_BranchTargetOut when EXMEM_BranchOut = '1' and EXMEM_ALUZeroOut = '1' else
 			PCPlus4;			
@@ -715,7 +746,7 @@ ALU_Func <= "00110" when IDEX_ALUOpOut = "001" else									-- add when branch
 				"00100" when IDEX_SignExtendedOut(5 downto 0) = "100110" else		-- xor
 				"00010" when IDEX_SignExtendedOut(5 downto 0) = "100000" else		-- add
 				"00110" when IDEX_SignExtendedOut(5 downto 0) = "100010" else		-- sub
-				"00111" when IDEX_SignExtendedOut(5 downto 0) = "101010" else 	-- slti, bgez, slt
+				"00111" when IDEX_SignExtendedOut(5 downto 0) = "101010" else 		-- slti, bgez, slt
 				"01110" when IDEX_SignExtendedOut(5 downto 0) = "101011"else		-- sltu
 				"00101" when (IDEX_SignExtendedOut(5 downto 0) = "000000" or 
 								  IDEX_SignExtendedOut(5 downto 0) = "000100") else	-- sll, sllv
@@ -761,7 +792,8 @@ EXMEM_Flush <= '1' when (IDEX_BranchOut = '1' and ALU_Status(0) = '1') or 			-- 
 
 -- Output to TOP
 Addr_Data <= EXMEM_ALUResult1Out;
-Data_Out <=	EXMEM_WriteDataMemOut;
+--Data_Out <=	EXMEM_WriteDataMemOut;
+Data_Out <=	EXMEM_ALUResult1Out;
 Memread <= EXMEM_MemreadOut;
 Memwrite <= EXMEM_MemwriteOut;
 
@@ -771,19 +803,23 @@ MEMWB_MemReadDataIn <= Data_In;
 MEMWB_ALUResult1In <= EXMEM_ALUResult1Out;
 MEMWB_ALUResult2In <= EXMEM_ALUResult2Out;
 MEMWB_WriteAddrRegIn <= EXMEM_WriteAddrRegOut;
+MEMWB_PCtoRegIn <= '0';
+MEMWB_NextPCIn	<= x"00000000";
+MEMWB_ALUOPIn <= "000";
+MEMWB_Instr15to0In <= x"0000";
+MEMWB_InstrtoRegIn <= '0';
 
 ---end MEM stage---------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------
 
 ---WB stage-------------------------------------------------------------------------------------------------------------------
 WriteAddr_Reg <= MEMWB_WriteAddrRegOut;
-WriteData_Reg <= PC_in + 4 when ((Instr(31 downto 26) = "000001" and 
-						(Instr(20 downto 16) = "10001" or Instr(20 downto 16) = "10000")) or 
-						Instr(31 downto 26) = "000011" or (ALUOp = "00" and Instr(5 downto 0) = "001001")) else	--bgezal or bltzal or jal or jalr
-						Data_in when MemtoReg = '1' else
-					  (Instr(15 downto 0) & x"0000") when InstrtoReg = '1' else
-					  ReadData_HiLo(63 downto 32) when (Instr(31 downto 26) = "000000" and Instr(5 downto 0) = "010000") else
-					  ReadData_HiLo(31 downto 0) when (Instr(31 downto 26) = "000000" and Instr(5 downto 0) = "010010") else
+WriteData_Reg <= MEMWB_NextPCOut when MEMWB_PCtoRegOut = '1' or 
+										  (MEMWB_ALUOpOut = "010" and MEMWB_Instr15to0Out(5 downto 0) = "001001") else
+						MEMWB_MemReadDataOut when MEMWB_MemtoRegOut = '1' else
+					  (MEMWB_Instr15to0Out(15 downto 0) & x"0000") when MEMWB_InstrtoRegOut = '1' else
+					  ReadData_HiLo(63 downto 32) when (MEMWB_ALUOpOut = "010" and MEMWB_Instr15to0Out(5 downto 0) = "010000") else
+					  ReadData_HiLo(31 downto 0) when (MEMWB_ALUOpOut = "010" and MEMWB_Instr15to0Out(5 downto 0) = "010010") else
 					  --CoProcessorOut when (Instr(31 downto 26) = "010000" and Instr(23) = '0') else -- MFC0
 					  MEMWB_ALUResult1Out;
 

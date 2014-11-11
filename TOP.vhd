@@ -54,7 +54,7 @@ architecture arch_TOP of TOP is
 ----------------------------------------------------------------
 -- Constants
 ----------------------------------------------------------------
-constant CLK_DIV_BITS	: integer := 0; --26 for a clock of the order of 1Hz. Changed in top.vhd_v2 : use (CLK_DIV_BITS of top.vhd_v2)+1. 
+constant CLK_DIV_BITS	: integer := 26; --26 for a clock of the order of 1Hz. Changed in top.vhd_v2 : use (CLK_DIV_BITS of top.vhd_v2)+1. 
 -- 1 for a 50MHz clock.
 -- See the notes in CLK_DIV_PROCESS for SIMULATION or for obtaining a 100MHz clock frequency, 
 constant N_LEDs			: integer := 8;
@@ -103,28 +103,15 @@ type MEM_256x32 is array (0 to 255) of std_logic_vector (31 downto 0); -- 256 wo
 -- Instruction Memory
 ----------------------------------------------------------------
 constant INSTR_MEM : MEM_256x32 := (
-			x"35290003",
-			x"37ff0003",
-			x"35ad0001",
-			x"012d4822",
-			x"0531fffe",
-			x"354a0009",
-			x"01495020",
---			x"3c090000", -- start : lui $t1, 0x0000
---			x"35290001", -- 			ori $t1, 0x0001 # constant 1
---			x"3c081002", -- 			lui $t0, 0x1002 # DIP address before offset
---			x"35088001", --			ori $t0, 0x8001
---			x"8d0c7fff", --			lw  $t4, 0x7fff($t0) # DIP address 0x10030000 = 0x10028001 + 0x7fff
---			x"3c081002", --			lui $t0, 0x1002 # LED address before offset
---			x"35080001", --			ori $t0, 0x0001
---			x"3c0a0000", -- loop: 	lui $t2, 0x0000
---			x"354a0004", -- 			ori $t2, 0x0004 # delay counter (n) if using slow clock
---			x"01495022", -- delay: 	sub $t2, $t2, $t1 
---			x"0149582a", -- 			slt $t3, $t2, $t1
---			x"1160fffd", -- 			beq $t3, $zero, delay
---			x"ad0cffff", -- 			sw  $t4, 0xffffffff($t0)	# LED address 0x10020000 = 0x10020001 + 0xffffffff.
---			x"01806027", --			nor $t4, $t4, $zero
---			x"08100007", -- 			j loop # infinite loop; n*3 (delay instructions) + 5 (non-delay instructions).
+			x"21290004",
+			x"21290004",
+			x"21290004",
+			x"21290004",
+			x"21290004",
+			x"21290004",
+			x"21290004",
+			x"21290004",
+			x"21290004",
 			others=> x"00000000");
 
 -- The Blinky program reads the DIP switches in the beginning. Let the value read be VAL
@@ -196,7 +183,9 @@ begin
 	if CLK'event and CLK = '1' then
 		if RESET = '1' then
 			LED(N_LEDs-1 downto 0) <= (others=> '0');
-		elsif (MemWrite = '1') and  (dec_LED = '1') then
+--		elsif (MemWrite = '1') and  (dec_LED = '1') then
+--			LED(N_LEDs-1 downto 0) <= Data_Out(N_LEDs-1 downto 0);
+		else
 			LED(N_LEDs-1 downto 0) <= Data_Out(N_LEDs-1 downto 0);
 		end if;
 	end if;
@@ -217,17 +206,17 @@ end process;
 ----------------------------------------------------------------
 -- Clock divider
 ----------------------------------------------------------------
-CLK <= CLK_undiv;
+-- CLK <= CLK_undiv;
 -- IMPORTANT : >>> uncomment the previous line and comment out the rest of the process
 --					>>> for SIMULATION or for obtaining a 100MHz clock frequency
---CLK_DIV_PROCESS : process(CLK_undiv)
---variable clk_counter : std_logic_vector(CLK_DIV_BITS-1 downto 0) := (others => '0');
---begin
---	if CLK_undiv'event and CLK_undiv = '1' then
---		clk_counter := clk_counter+1;
---		CLK <= clk_counter(CLK_DIV_BITS-1);
---	end if;
---end process;
+CLK_DIV_PROCESS : process(CLK_undiv)
+variable clk_counter : std_logic_vector(CLK_DIV_BITS-1 downto 0) := (others => '0');
+begin
+	if CLK_undiv'event and CLK_undiv = '1' then
+		clk_counter := clk_counter+1;
+		CLK <= clk_counter(CLK_DIV_BITS-1);
+	end if;
+end process;
 
 end arch_TOP;
 

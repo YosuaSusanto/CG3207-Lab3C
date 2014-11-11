@@ -107,7 +107,7 @@ begin
 	if rising_edge(CLK) then
 		if IDEX_Flush = '1' then
 			IDEX_BranchOut			<= '0';
-			IDEX_ALUOpOut			<= "000";
+			IDEX_ALUOpOut			<= "XXX";
 			IDEX_MemreadOut		<= '0';
 			IDEX_MemtoRegOut		<= '0';
 			IDEX_InstrtoRegOut	<= '0';
@@ -232,12 +232,22 @@ Port (CLK					 		:	in STD_LOGIC;
 		MEMWB_ALUResult1In		:	in STD_LOGIC_VECTOR(31 downto 0);
 		MEMWB_ALUResult2In		:	in STD_LOGIC_VECTOR(31 downto 0);
 		MEMWB_WriteAddrRegIn		:	in STD_LOGIC_VECTOR(4 downto 0);
+		MEMWB_PCtoRegIn			:	in STD_LOGIC;
+		MEMWB_NextPCIn				:	in STD_LOGIC_VECTOR(31 downto 0);
+		MEMWB_ALUOPIn				:	in STD_LOGIC_VECTOR(2 downto 0);
+		MEMWB_Instr15to0In		:	in STD_LOGIC_VECTOR(15 downto 0);
+		MEMWB_InstrtoRegIn		:	in STD_LOGIC;
 		
 		MEMWB_MemtoRegOut			:	out STD_LOGIC;
 		MEMWB_MemReadDataOut		:	out STD_LOGIC_VECTOR(31 downto 0);
 		MEMWB_ALUResult1Out		:	out STD_LOGIC_VECTOR(31 downto 0);
 		MEMWB_ALUResult2Out		:	out STD_LOGIC_VECTOR(31 downto 0);
-		MEMWB_WriteAddrRegOut	:	out STD_LOGIC_VECTOR(4 downto 0)
+		MEMWB_WriteAddrRegOut	:	out STD_LOGIC_VECTOR(4 downto 0);
+		MEMWB_PCtoRegOut			:	out STD_LOGIC;
+		MEMWB_NextPCOut			:	out STD_LOGIC_VECTOR(31 downto 0);
+		MEMWB_ALUOPOut				:	out STD_LOGIC_VECTOR(2 downto 0);
+		MEMWB_Instr15to0Out		:	out STD_LOGIC_VECTOR(15 downto 0);
+		MEMWB_InstrtoRegOut		:	out STD_LOGIC
 		);
 end MEM_WB;
 
@@ -252,6 +262,11 @@ begin
 			MEMWB_ALUResult1Out		<= x"00000000";
 			MEMWB_ALUResult2Out		<= x"00000000";
 			MEMWB_WriteAddrRegOut	<= "00000";
+			MEMWB_PCtoRegOut			<= '0';
+			MEMWB_NextPCOut			<= x"00000000";
+			MEMWB_ALUOPOut				<= "XXX";
+			MEMWB_Instr15to0Out		<= x"0000";
+			MEMWB_InstrtoRegOut		<= '0';
 			
 		elsif MEMWB_Stall = '0' then
 			MEMWB_MemtoRegOut			<= MEMWB_MemtoRegIn;
@@ -259,6 +274,12 @@ begin
 			MEMWB_ALUResult1Out		<= MEMWB_ALUResult1In;
 			MEMWB_ALUResult2Out		<= MEMWB_ALUResult2In;
 			MEMWB_WriteAddrRegOut	<= MEMWB_WriteAddrRegIn;
+			MEMWB_PCtoRegOut			<= MEMWB_PCtoRegIn;
+			MEMWB_NextPCOut			<= MEMWB_NextPCIn;
+			MEMWB_ALUOPOut				<= MEMWB_ALUOpIn;
+			MEMWB_Instr15to0Out		<= MEMWB_Instr15to0In;
+			MEMWB_InstrtoRegOut		<= MEMWB_InstrtoRegIn;
+
 		end if;
 	end if;
 end process;
