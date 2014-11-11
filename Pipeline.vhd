@@ -173,6 +173,8 @@ Port (CLK							:	in STD_LOGIC;
 		EXMEM_WriteDataMemIn		:	in STD_LOGIC_VECTOR(31 downto 0);
 		EXMEM_WriteAddrRegIn		:	in STD_LOGIC_VECTOR(4 downto 0);
 		EXMEM_RegWriteIn			:  in STD_LOGIC;
+		EXMEM_Instr15to0In		:	in STD_LOGIC_VECTOR(15 downto 0);
+		EXMEM_InstrtoRegIn		:	in STD_LOGIC;
 		
 		EXMEM_BranchOut			:	out STD_LOGIC;
 		EXMEM_BranchTargetOut	:	out STD_LOGIC_VECTOR(31 downto 0);
@@ -184,7 +186,9 @@ Port (CLK							:	in STD_LOGIC;
 		EXMEM_ALUResult2Out		:  out STD_LOGIC_VECTOR(31 downto 0);
 		EXMEM_WriteDataMemOut	:	out STD_LOGIC_VECTOR(31 downto 0);
 		EXMEM_WriteAddrRegOut	:	out STD_LOGIC_VECTOR(4 downto 0);
-		EXMEM_RegwriteOut			:	out STD_LOGIC
+		EXMEM_RegwriteOut			:	out STD_LOGIC;
+		EXMEM_Instr15to0Out		:	out STD_LOGIC_VECTOR(15 downto 0);
+		EXMEM_InstrtoRegOut		:	out STD_LOGIC
 		);
 end EX_MEM;
 
@@ -206,6 +210,8 @@ begin
 			EXMEM_WriteDataMemOut	<= x"00000000";
 			EXMEM_WriteAddrRegOut	<= "00000";
 			EXMEM_RegWriteOut			<= '0';
+			EXMEM_Instr15to0Out		<= x"0000";
+			EXMEM_InstrtoRegOut		<= '0';
 			
 		elsif EXMEM_Stall = '0' then
 			EXMEM_BranchOut			<=	EXMEM_BranchIn;
@@ -219,6 +225,8 @@ begin
 			EXMEM_WriteDataMemOut	<=	EXMEM_WriteDataMemIn;
 			EXMEM_WriteAddrRegOut	<=	EXMEM_WriteAddrRegIn;
 			EXMEM_RegwriteOut			<= EXMEM_RegwriteIn;
+			EXMEM_Instr15to0Out		<= EXMEM_Instr15to0In;
+			EXMEM_InstrtoRegOut		<= EXMEM_InstrtoRegIn;
 		end if;
 	end if;
 end process;

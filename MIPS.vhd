@@ -209,6 +209,8 @@ component EX_MEM is
 			EXMEM_WriteDataMemIn		:	in STD_LOGIC_VECTOR(31 downto 0);
 			EXMEM_WriteAddrRegIn		:	in STD_LOGIC_VECTOR(4 downto 0);
 			EXMEM_RegwriteIn			:	in STD_LOGIC;
+			EXMEM_Instr15to0In		:	in STD_LOGIC_VECTOR(15 downto 0);
+			EXMEM_InstrtoRegIn		:	in STD_LOGIC;
 
 			EXMEM_BranchOut			:	out STD_LOGIC;
 			EXMEM_BranchTargetOut	:	out STD_LOGIC_VECTOR(31 downto 0);
@@ -220,7 +222,9 @@ component EX_MEM is
 			EXMEM_ALUResult2Out		:  out STD_LOGIC_VECTOR(31 downto 0);
 			EXMEM_WriteDataMemOut	:	out STD_LOGIC_VECTOR(31 downto 0);
 			EXMEM_WriteAddrRegOut	:	out STD_LOGIC_VECTOR(4 downto 0);
-			EXMEM_RegwriteOut			:	out STD_LOGIC
+			EXMEM_RegwriteOut			:	out STD_LOGIC;
+			EXMEM_Instr15to0Out		:	out STD_LOGIC_VECTOR(15 downto 0);
+			EXMEM_InstrtoRegOut		:	out STD_LOGIC
 			);
 end component;
 
@@ -415,6 +419,8 @@ end component;
 	signal	EXMEM_WriteDataMemIn		: STD_LOGIC_VECTOR(31 downto 0);
 	signal	EXMEM_WriteAddrRegIn		: STD_LOGIC_VECTOR(4 downto 0);
 	signal 	EXMEM_RegwriteIn			: STD_LOGIC;
+	signal	EXMEM_Instr15to0In		: STD_LOGIC_VECTOR(15 downto 0);
+	signal	EXMEM_InstrtoRegIn		: STD_LOGIC;
 
 	signal	EXMEM_BranchOut			: STD_LOGIC;
 	signal	EXMEM_BranchTargetOut	: STD_LOGIC_VECTOR(31 downto 0);
@@ -427,6 +433,8 @@ end component;
 	signal	EXMEM_WriteDataMemOut	: STD_LOGIC_VECTOR(31 downto 0);
 	signal	EXMEM_WriteAddrRegOut	: STD_LOGIC_VECTOR(4 downto 0);
 	signal	EXMEM_RegwriteOut			: STD_LOGIC;
+	signal	EXMEM_Instr15to0Out		: STD_LOGIC_VECTOR(15 downto 0);
+	signal	EXMEM_InstrtoRegOut		: STD_LOGIC;
 	
 ----------------------------------------------------------------
 -- MEM_WB Signals
@@ -653,6 +661,8 @@ EX_MEM1	:EX_MEM port map
 		EXMEM_WriteDataMemIn		=>	EXMEM_WriteDataMemIn,
 		EXMEM_WriteAddrRegIn		=>	EXMEM_WriteAddrRegIn,
 		EXMEM_RegwriteIn			=> EXMEM_RegwriteIn,
+		EXMEM_Instr15to0In		=> EXMEM_Instr15to0In,
+		EXMEM_InstrtoRegIn		=> EXMEM_InstrtoRegIn,
 
 		EXMEM_BranchOut			=>	EXMEM_BranchOut,
 		EXMEM_BranchTargetOut	=>	EXMEM_BranchTargetOut,
@@ -664,7 +674,9 @@ EX_MEM1	:EX_MEM port map
 		EXMEM_ALUResult2Out		=> EXMEM_ALUResult2Out,
 		EXMEM_WriteDataMemOut	=>	EXMEM_WriteDataMemOut,
 		EXMEM_WriteAddrRegOut	=>	EXMEM_WriteAddrRegOut,
-		EXMEM_RegwriteOut			=> EXMEM_RegwriteOut
+		EXMEM_RegwriteOut			=> EXMEM_RegwriteOut,
+		EXMEM_Instr15to0Out		=> EXMEM_Instr15to0Out,
+		EXMEM_InstrtoRegOut		=> EXMEM_InstrtoRegOut
 		);
 		
 ----------------------------------------------------------------
@@ -801,7 +813,7 @@ ForwardData2 <= IDEX_ReadData2Out when ForwardB = "00" else
 					WriteData_Reg;
 
 ALU_InA <= ForwardData2 when (IDEX_ALUOpOut = "010" and 
-											  IDEX_SignExtendedOut(5 downto 3) = "000") else	-- IDEX_SignExtendedOut(5 downto 3) is Instr(5 downto 3)
+										IDEX_SignExtendedOut(5 downto 3) = "000") else	-- IDEX_SignExtendedOut(5 downto 3) is Instr(5 downto 3)
 			  ForwardData1;
 			  
 ALU_InB <= (x"000000" & "000" & IDEX_SignExtendedOut(10 downto 6)) when (IDEX_ALUOpOut = "010" and 
@@ -817,25 +829,25 @@ ALU_Func <= "00110" when IDEX_ALUOpOut = "001" else									-- add when branch
 				"00010" when IDEX_ALUOpOut = "000" else									-- add when lw, sw, addiu, addi
 				"00001" when IDEX_ALUOpOut = "011" else				 					-- or when ori
 				"00111" when IDEX_ALUOpOut = "101" else									-- slt for slti and bgez
-				"00000" when IDEX_SignExtendedOut(5 downto 0) = "100100" else		-- and
-				"00001" when IDEX_SignExtendedOut(5 downto 0) = "100101" else		-- or
-				"01100" when IDEX_SignExtendedOut(5 downto 0) = "100111" else		-- nor
-				"00100" when IDEX_SignExtendedOut(5 downto 0) = "100110" else		-- xor
-				"00010" when IDEX_SignExtendedOut(5 downto 0) = "100000" else		-- add
-				"00110" when IDEX_SignExtendedOut(5 downto 0) = "100010" else		-- sub
-				"00111" when IDEX_SignExtendedOut(5 downto 0) = "101010" else 		-- slti, bgez, slt
-				"01110" when IDEX_SignExtendedOut(5 downto 0) = "101011"else		-- sltu
-				"00101" when (IDEX_SignExtendedOut(5 downto 0) = "000000" or 
-								  IDEX_SignExtendedOut(5 downto 0) = "000100") else	-- sll, sllv
-				"01101" when (IDEX_SignExtendedOut(5 downto 0) = "000010" or 
-								  IDEX_SignExtendedOut(5 downto 0) = "000110") else	-- srl, srlv
-				"01001" when (IDEX_SignExtendedOut(5 downto 0) = "000011" or 
-								  IDEX_SignExtendedOut(5 downto 0) = "000111") else	-- sra, srav
-				"10000" when IDEX_SignExtendedOut(5 downto 0) = "011000" else		-- mult
-				"10001" when IDEX_SignExtendedOut(5 downto 0) = "011001" else		-- multu
-				"10010" when IDEX_SignExtendedOut(5 downto 0) = "011010" else		-- div
-				"10011" when IDEX_SignExtendedOut(5 downto 0) = "011011" else		-- divu
-				"XXXXX";																				-- unknown operation
+				"00000" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "100100" else		-- and
+				"00001" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "100101" else		-- or
+				"01100" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "100111" else		-- nor
+				"00100" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "100110" else		-- xor
+				"00010" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "100000" else		-- add
+				"00110" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "100010" else		-- sub
+				"00111" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "101010" else 		-- slti, bgez, slt
+				"01110" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "101011"else			-- sltu
+				"00101" when IDEX_ALUOpOut = "010" and (IDEX_SignExtendedOut(5 downto 0) = "000000" or 
+																	IDEX_SignExtendedOut(5 downto 0) = "000100") else		-- sll, sllv
+				"01101" when IDEX_ALUOpOut = "010" and (IDEX_SignExtendedOut(5 downto 0) = "000010" or 
+																	IDEX_SignExtendedOut(5 downto 0) = "000110") else		-- srl, srlv
+				"01001" when IDEX_ALUOpOut = "010" and (IDEX_SignExtendedOut(5 downto 0) = "000011" or 
+																	IDEX_SignExtendedOut(5 downto 0) = "000111") else		-- sra, srav
+				"10000" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "011000" else		-- mult
+				"10001" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "011001" else		-- multu
+				"10010" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "011010" else		-- div
+				"10011" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "011011" else		-- divu
+				"XXXXX";																													-- unknown operation
 				
 ALU_Control <= RESET & ALU_Func;	
 
@@ -859,6 +871,8 @@ EXMEM_WriteAddrRegIn <= "11111" when IDEX_PCtoRegOut = '1' or
 								IDEX_RegRtOut when IDEX_RegDstOut = '0' else
 								IDEX_RegRdOut;
 EXMEM_RegwriteIn <= IDEX_RegwriteOut;
+EXMEM_Instr15to0In <= IDEX_SignExtendedOut(15 downto 0);
+EXMEM_InstrtoRegIn <= IDEX_InstrtoRegOut;
 
 ---end EX stage---------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------
@@ -881,8 +895,8 @@ MEMWB_WriteAddrRegIn <= EXMEM_WriteAddrRegOut;
 MEMWB_PCtoRegIn <= '0';
 MEMWB_NextPCIn	<= x"00000000";
 MEMWB_ALUOPIn <= "000";
-MEMWB_Instr15to0In <= x"0000";
-MEMWB_InstrtoRegIn <= '0';
+MEMWB_Instr15to0In <= EXMEM_Instr15to0Out;
+MEMWB_InstrtoRegIn <= EXMEM_InstrtoRegOut;
 MEMWB_RegwriteIn <= EXMEM_RegwriteOut;
 
 ---end MEM stage---------------------------------------------------------------------------------------------------------------
@@ -893,7 +907,7 @@ WriteAddr_Reg <= MEMWB_WriteAddrRegOut;
 WriteData_Reg <= MEMWB_NextPCOut when MEMWB_PCtoRegOut = '1' or 
 										  (MEMWB_ALUOpOut = "010" and MEMWB_Instr15to0Out(5 downto 0) = "001001") else
 						MEMWB_MemReadDataOut when MEMWB_MemtoRegOut = '1' else
-					  (MEMWB_Instr15to0Out(15 downto 0) & x"0000") when MEMWB_InstrtoRegOut = '1' else
+					  (MEMWB_Instr15to0Out & x"0000") when MEMWB_InstrtoRegOut = '1' else
 					  ReadData_HiLo(63 downto 32) when (MEMWB_ALUOpOut = "010" and MEMWB_Instr15to0Out(5 downto 0) = "010000") else
 					  ReadData_HiLo(31 downto 0) when (MEMWB_ALUOpOut = "010" and MEMWB_Instr15to0Out(5 downto 0) = "010010") else
 					  --CoProcessorOut when (Instr(31 downto 26) = "010000" and Instr(23) = '0') else -- MFC0
