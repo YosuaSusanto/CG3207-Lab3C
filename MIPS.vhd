@@ -168,6 +168,7 @@ component ID_EX is
 			IDEX_SignExtendIn		:	in STD_LOGIC;
 			IDEX_SignExtendedIn	:	in STD_LOGIC_VECTOR(31 downto 0);
 			IDEX_RegwriteIn		:	in STD_LOGIC;
+			IDEX_InstrtoRegIn		:	in STD_LOGIC;
 			
 			IDEX_BranchOut			:	out STD_LOGIC;
 			IDEX_ALUOpOut			:  out STD_LOGIC_VECTOR(2 downto 0);
@@ -185,7 +186,8 @@ component ID_EX is
 			IDEX_ReadData2Out		:	out STD_LOGIC_VECTOR(31 downto 0);
 			IDEX_SignExtendOut	:	out STD_LOGIC;
 			IDEX_SignExtendedOut	:	out STD_LOGIC_VECTOR(31 downto 0);
-			IDEX_RegwriteOut		:	out STD_LOGIC
+			IDEX_RegwriteOut		:	out STD_LOGIC;
+			IDEX_InstrtoRegOut	:	out STD_LOGIC
 			);
 end component;
 
@@ -377,6 +379,7 @@ end component;
 	signal	IDEX_SignExtendIn		: STD_LOGIC;
 	signal	IDEX_SignExtendedIn	: STD_LOGIC_VECTOR(31 downto 0);
 	signal	IDEX_RegwriteIn		: STD_LOGIC;
+	signal	IDEX_InstrtoRegIn		: STD_LOGIC;
 		
 	signal	IDEX_BranchOut			: STD_LOGIC;
 	signal	IDEX_ALUOpOut			: STD_LOGIC_VECTOR(2 downto 0);
@@ -395,6 +398,7 @@ end component;
 	signal	IDEX_SignExtendOut	: STD_LOGIC;
 	signal	IDEX_SignExtendedOut	: STD_LOGIC_VECTOR(31 downto 0);
 	signal	IDEX_RegwriteOut		: STD_LOGIC;
+	signal	IDEX_InstrtoRegOut	: STD_LOGIC;
 
 ----------------------------------------------------------------
 -- EX_MEM Signals
@@ -609,6 +613,7 @@ ID_EX1: ID_EX port map
 		IDEX_SignExtendIn		=> IDEX_SignExtendIn,
 		IDEX_SignExtendedIn	=> IDEX_SignExtendedIn,
 		IDEX_RegwriteIn		=> IDEX_RegwriteIn,
+		IDEX_InstrtoRegIn		=> IDEX_InstrtoRegIn,
 		
 		IDEX_BranchOut			=> IDEX_BranchOut,
 		IDEX_ALUOpOut			=> IDEX_ALUOpOut,
@@ -626,7 +631,8 @@ ID_EX1: ID_EX port map
 		IDEX_ReadData2Out		=> IDEX_ReadData2Out,
 		IDEX_SignExtendOut	=> IDEX_SignExtendOut,
 		IDEX_SignExtendedOut	=> IDEX_SignExtendedOut,
-		IDEX_RegwriteOut		=> IDEX_RegwriteOut
+		IDEX_RegwriteOut		=> IDEX_RegwriteOut,
+		IDEX_InstrtoRegOut	=> IDEX_InstrtoRegOut
 		);
 
 ----------------------------------------------------------------
@@ -736,6 +742,10 @@ IDEX_Flush <= '1' when (EXMEM_BranchOut = '1' and EXMEM_ALUZeroOut = '1') else 	
 					'0';
 EXMEM_Flush <= '1' when (EXMEM_BranchOut = '1' and EXMEM_ALUZeroOut = '1') else 				-- Flush when BEQ
 					'0';					
+IFID_Stall <= '0';
+IDEX_Stall <= '0';
+EXMEM_Stall <= '0';
+MEMWB_Stall <= '0';
 
 -- Input for IFID
 IFID_PCPlus4In <= PCPlus4;
@@ -773,6 +783,7 @@ IDEX_ReadData2In <= ReadData2_Reg;
 IDEX_SignExtendIn <= SignExtend;
 IDEX_SignExtendedIn <= SignEx_Out;
 IDEX_RegwriteIn <= CURegwrite;
+IDEX_InstrtoRegIn	<= InstrtoReg;
 
 --end ID stage----------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------
@@ -833,7 +844,7 @@ ALU_Func <= "00110" when IDEX_ALUOpOut = "001" else									-- add when branch
 				
 ALU_Control <= RESET & ALU_Func;	
 
-EX_Result <= (IDEX_SignExtendedOut(15 downto 0) & x"0000") when InstrtoReg = '1' else		-- LUI
+EX_Result <= (IDEX_SignExtendedOut(15 downto 0) & x"0000") when IDEX_InstrtoRegOut = '1' else		-- LUI
 				 ALU_Result1;
 
 -- Input for RegHiLo

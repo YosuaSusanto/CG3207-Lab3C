@@ -79,6 +79,7 @@ Port (CLK						:	in STD_LOGIC;
 		IDEX_SignExtendIn		:	in STD_LOGIC;
 		IDEX_SignExtendedIn	:	in STD_LOGIC_VECTOR(31 downto 0);
 		IDEX_RegwriteIn		:	in STD_LOGIC;
+		IDEX_InstrtoRegIn		:	in STD_LOGIC;
 		
 		IDEX_BranchOut			:	out STD_LOGIC;
 		IDEX_ALUOpOut			:  out STD_LOGIC_VECTOR(2 downto 0);
@@ -96,7 +97,8 @@ Port (CLK						:	in STD_LOGIC;
 		IDEX_ReadData2Out		:	out STD_LOGIC_VECTOR(31 downto 0);
 		IDEX_SignExtendOut	:	out STD_LOGIC;
 		IDEX_SignExtendedOut	:	out STD_LOGIC_VECTOR(31 downto 0);
-		IDEX_RegWriteOut		:	out STD_LOGIC
+		IDEX_RegWriteOut		:	out STD_LOGIC;
+		IDEX_InstrtoRegOut	:	out STD_LOGIC
 		);
 end ID_EX;
 
@@ -123,6 +125,7 @@ begin
 			IDEX_SignExtendOut	<= '0';
 			IDEX_SignExtendedOut	<= x"00000000";
 			IDEX_RegwriteOut		<= '0';
+			IDEX_InstrtoRegOut	<= '0';
 			
 		elsif IDEX_Stall = '0' then
 			IDEX_BranchOut			<= IDEX_BranchIn;
@@ -142,6 +145,7 @@ begin
 			IDEX_SignExtendOut	<= IDEX_SignExtendIn;
 			IDEX_SignExtendedOut	<= IDEX_SignExtendedIn;
 			IDEX_RegwriteOut		<= IDEX_RegwriteIn;
+			IDEX_InstrtoRegOut	<= IDEX_InstrtoRegIn;
 		end if;
 	end if;
 end process;
