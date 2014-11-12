@@ -778,8 +778,10 @@ IDEX_RegRsIn <= IFID_InstrOut(25 downto 21);
 IDEX_RegRtIn <= IFID_InstrOut(20 downto 16);
 IDEX_RegRdIn <= IFID_InstrOut(15 downto 11);
 IDEX_PCPlus4In <= IFID_PcPlus4Out;
-IDEX_ReadData1In <= ReadData1_Reg;
-IDEX_ReadData2In <= ReadData2_Reg;
+IDEX_ReadData1In <= 	WriteData_Reg when (Regwrite = '1' and WriteAddr_Reg = ReadAddr1_Reg) else
+							ReadData1_Reg;
+IDEX_ReadData2In <= 	WriteData_Reg when (Regwrite = '1' and WriteAddr_Reg = ReadAddr2_Reg) else
+							ReadData2_Reg;
 IDEX_SignExtendIn <= SignExtend;
 IDEX_SignExtendedIn <= SignEx_Out;
 IDEX_RegwriteIn <= CURegwrite;
@@ -799,11 +801,11 @@ FW_MEMWBRegRd <= MEMWB_WriteAddrRegOut;
 
 -- Input for ALU
 ForwardData1 <= IDEX_ReadData1Out when ForwardA = "00" else
-					EXMEM_ALUResult1Out when ForwardA = "10" else
-					WriteData_Reg;
+					 EXMEM_ALUResult1Out when ForwardA = "10" else
+					 WriteData_Reg;
 ForwardData2 <= IDEX_ReadData2Out when ForwardB = "00" else
-					EXMEM_ALUResult1Out when ForwardB = "10" else
-					WriteData_Reg;
+					 EXMEM_ALUResult1Out when ForwardB = "10" else
+					 WriteData_Reg;
 
 ALU_InA <= ForwardData2 when (IDEX_ALUOpOut = "010" and 
 										IDEX_SignExtendedOut(5 downto 3) = "000") else	-- IDEX_SignExtendedOut(5 downto 3) is Instr(5 downto 3)
