@@ -127,8 +127,8 @@ constant INSTR_MEM : MEM_256x32 := (
 			x"35080001",
 			x"01495022",
 			x"0149582a",
-			--x"ad0affff",
-			x"1160fffd",
+			x"ad0affff",
+			x"1160fffc",
 			others=> x"00000000");
 
 -- The Blinky program reads the DIP switches in the beginning. Let the value read be VAL
@@ -200,9 +200,7 @@ begin
 	if CLK'event and CLK = '1' then
 		if RESET = '1' then
 			LED(N_LEDs-1 downto 0) <= (others=> '0');
---		elsif (MemWrite = '1') and  (dec_LED = '1') then
---			LED(N_LEDs-1 downto 0) <= Data_Out(N_LEDs-1 downto 0);
-		else
+		elsif (MemWrite = '1') and  (dec_LED = '1') then
 			LED(N_LEDs-1 downto 0) <= Data_Out(N_LEDs-1 downto 0);
 		end if;
 	end if;
@@ -223,7 +221,7 @@ end process;
 ----------------------------------------------------------------
 -- Clock divider
 ----------------------------------------------------------------
- CLK <= CLK_undiv;
+CLK <= CLK_undiv;
 -- IMPORTANT : >>> uncomment the previous line and comment out the rest of the process
 --					>>> for SIMULATION or for obtaining a 100MHz clock frequency
 --CLK_DIV_PROCESS : process(CLK_undiv)

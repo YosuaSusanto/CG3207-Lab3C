@@ -778,9 +778,15 @@ IDEX_RegRsIn <= IFID_InstrOut(25 downto 21);
 IDEX_RegRtIn <= IFID_InstrOut(20 downto 16);
 IDEX_RegRdIn <= IFID_InstrOut(15 downto 11);
 IDEX_PCPlus4In <= IFID_PcPlus4Out;
-IDEX_ReadData1In <= 	WriteData_Reg when (Regwrite = '1' and WriteAddr_Reg = ReadAddr1_Reg) else
+IDEX_ReadData1In <= 	EXMEM_ALUResult1Out when (EXMEM_RegwriteOut = '1' and 
+															  EXMEM_MemtoRegOut = '0' and EXMEM_WriteAddrRegOut = ReadAddr1_Reg) else
+							WriteData_Reg when (Regwrite = '1' and 
+													  WriteAddr_Reg = ReadAddr1_Reg) else
 							ReadData1_Reg;
-IDEX_ReadData2In <= 	WriteData_Reg when (Regwrite = '1' and WriteAddr_Reg = ReadAddr2_Reg) else
+IDEX_ReadData2In <= 	EXMEM_ALUResult1Out when (EXMEM_RegwriteOut = '1' and 
+															  EXMEM_MemtoRegOut = '0' and EXMEM_WriteAddrRegOut = ReadAddr2_Reg) else
+							WriteData_Reg when (Regwrite = '1' and 
+													  WriteAddr_Reg = ReadAddr2_Reg) else
 							ReadData2_Reg;
 IDEX_SignExtendIn <= SignExtend;
 IDEX_SignExtendedIn <= SignEx_Out;
@@ -878,8 +884,7 @@ EXMEM_Instr15to0In <= IDEX_SignExtendedOut(15 downto 0);
 
 -- Output to TOP
 Addr_Data <= EXMEM_ALUResult1Out;
---Data_Out <=	EXMEM_WriteDataMemOut;
-Data_Out <=	EXMEM_ALUResult1Out;
+Data_Out <=	EXMEM_WriteDataMemOut;
 Memread <= EXMEM_MemreadOut;
 Memwrite <= EXMEM_MemwriteOut;
 
