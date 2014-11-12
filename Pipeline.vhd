@@ -66,7 +66,6 @@ Port (CLK						:	in STD_LOGIC;
 		IDEX_ALUOpIn			:  in STD_LOGIC_VECTOR(2 downto 0);
 		IDEX_MemreadIn			:  in STD_LOGIC;
 		IDEX_MemtoRegIn		:	in STD_LOGIC;
-		IDEX_InstrtoRegIn		:	in STD_LOGIC;
 		IDEX_PCtoRegIn			:  in STD_LOGIC;
 		IDEX_MemwriteIn		:  in STD_LOGIC;
 		IDEX_ALUSrcIn			:	in STD_LOGIC;
@@ -85,7 +84,6 @@ Port (CLK						:	in STD_LOGIC;
 		IDEX_ALUOpOut			:  out STD_LOGIC_VECTOR(2 downto 0);
 		IDEX_MemreadOut		:  out STD_LOGIC;
 		IDEX_MemtoRegOut		:	out STD_LOGIC;
-		IDEX_InstrtoRegOut	:	out STD_LOGIC;
 		IDEX_PCtoRegOut		:	out STD_LOGIC;
 		IDEX_MemwriteOut		:  out STD_LOGIC;
 		IDEX_ALUSrcOut			: 	out STD_LOGIC;
@@ -112,7 +110,6 @@ begin
 			IDEX_ALUOpOut			<= "XXX";
 			IDEX_MemreadOut		<= '0';
 			IDEX_MemtoRegOut		<= '0';
-			IDEX_InstrtoRegOut	<= '0';
 			IDEX_PCtoRegOut		<= '0';
 			IDEX_MemwriteOut		<= '0';
 			IDEX_ALUSrcOut			<= '0';
@@ -132,7 +129,6 @@ begin
 			IDEX_ALUOpOut			<= IDEX_ALUOpIn;
 			IDEX_MemreadOut		<= IDEX_MemreadIn;
 			IDEX_MemtoRegOut		<= IDEX_MemtoRegIn;
-			IDEX_InstrtoRegOut	<=	IDEX_InstrtoRegIn;
 			IDEX_PCtoRegOut		<= IDEX_PCtoRegIn;
 			IDEX_MemwriteOut		<= IDEX_MemwriteIn;
 			IDEX_ALUSrcOut			<= IDEX_ALUSrcIn;
@@ -174,7 +170,6 @@ Port (CLK							:	in STD_LOGIC;
 		EXMEM_WriteAddrRegIn		:	in STD_LOGIC_VECTOR(4 downto 0);
 		EXMEM_RegWriteIn			:  in STD_LOGIC;
 		EXMEM_Instr15to0In		:	in STD_LOGIC_VECTOR(15 downto 0);
-		EXMEM_InstrtoRegIn		:	in STD_LOGIC;
 		
 		EXMEM_BranchOut			:	out STD_LOGIC;
 		EXMEM_BranchTargetOut	:	out STD_LOGIC_VECTOR(31 downto 0);
@@ -187,8 +182,7 @@ Port (CLK							:	in STD_LOGIC;
 		EXMEM_WriteDataMemOut	:	out STD_LOGIC_VECTOR(31 downto 0);
 		EXMEM_WriteAddrRegOut	:	out STD_LOGIC_VECTOR(4 downto 0);
 		EXMEM_RegwriteOut			:	out STD_LOGIC;
-		EXMEM_Instr15to0Out		:	out STD_LOGIC_VECTOR(15 downto 0);
-		EXMEM_InstrtoRegOut		:	out STD_LOGIC
+		EXMEM_Instr15to0Out		:	out STD_LOGIC_VECTOR(15 downto 0)
 		);
 end EX_MEM;
 
@@ -211,7 +205,6 @@ begin
 			EXMEM_WriteAddrRegOut	<= "00000";
 			EXMEM_RegWriteOut			<= '0';
 			EXMEM_Instr15to0Out		<= x"0000";
-			EXMEM_InstrtoRegOut		<= '0';
 			
 		elsif EXMEM_Stall = '0' then
 			EXMEM_BranchOut			<=	EXMEM_BranchIn;
@@ -226,7 +219,6 @@ begin
 			EXMEM_WriteAddrRegOut	<=	EXMEM_WriteAddrRegIn;
 			EXMEM_RegwriteOut			<= EXMEM_RegwriteIn;
 			EXMEM_Instr15to0Out		<= EXMEM_Instr15to0In;
-			EXMEM_InstrtoRegOut		<= EXMEM_InstrtoRegIn;
 		end if;
 	end if;
 end process;
@@ -252,7 +244,6 @@ Port (CLK					 		:	in STD_LOGIC;
 		MEMWB_NextPCIn				:	in STD_LOGIC_VECTOR(31 downto 0);
 		MEMWB_ALUOPIn				:	in STD_LOGIC_VECTOR(2 downto 0);
 		MEMWB_Instr15to0In		:	in STD_LOGIC_VECTOR(15 downto 0);
-		MEMWB_InstrtoRegIn		:	in STD_LOGIC;
 		MEMWB_RegwriteIn			:	in STD_LOGIC;
 		
 		MEMWB_MemtoRegOut			:	out STD_LOGIC;
@@ -264,7 +255,6 @@ Port (CLK					 		:	in STD_LOGIC;
 		MEMWB_NextPCOut			:	out STD_LOGIC_VECTOR(31 downto 0);
 		MEMWB_ALUOPOut				:	out STD_LOGIC_VECTOR(2 downto 0);
 		MEMWB_Instr15to0Out		:	out STD_LOGIC_VECTOR(15 downto 0);
-		MEMWB_InstrtoRegOut		:	out STD_LOGIC;
 		MEMWB_RegwriteOut			:	out STD_LOGIC
 		);
 end MEM_WB;
@@ -284,7 +274,6 @@ begin
 			MEMWB_NextPCOut			<= x"00000000";
 			MEMWB_ALUOPOut				<= "XXX";
 			MEMWB_Instr15to0Out		<= x"0000";
-			MEMWB_InstrtoRegOut		<= '0';
 			MEMWB_RegwriteOut			<= '0';
 			
 		elsif MEMWB_Stall = '0' then
@@ -297,7 +286,6 @@ begin
 			MEMWB_NextPCOut			<= MEMWB_NextPCIn;
 			MEMWB_ALUOPOut				<= MEMWB_ALUOpIn;
 			MEMWB_Instr15to0Out		<= MEMWB_Instr15to0In;
-			MEMWB_InstrtoRegOut		<= MEMWB_InstrtoRegIn;
 			MEMWB_RegwriteOut			<= MEMWB_RegwriteIn;
 		end if;
 	end if;

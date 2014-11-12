@@ -54,7 +54,7 @@ architecture arch_TOP of TOP is
 ----------------------------------------------------------------
 -- Constants
 ----------------------------------------------------------------
-constant CLK_DIV_BITS	: integer := 26; --26 for a clock of the order of 1Hz. Changed in top.vhd_v2 : use (CLK_DIV_BITS of top.vhd_v2)+1. 
+constant CLK_DIV_BITS	: integer := 1; --26 for a clock of the order of 1Hz. Changed in top.vhd_v2 : use (CLK_DIV_BITS of top.vhd_v2)+1. 
 -- 1 for a 50MHz clock.
 -- See the notes in CLK_DIV_PROCESS for SIMULATION or for obtaining a 100MHz clock frequency, 
 constant N_LEDs			: integer := 8;
@@ -118,7 +118,7 @@ constant INSTR_MEM : MEM_256x32 := (
 --			x"ad0cffff", -- 			sw  $t4, 0xffffffff($t0)	# LED address 0x10020000 = 0x10020001 + 0xffffffff.
 --			x"01806027", --			nor $t4, $t4, $zero
 --			x"08100007", -- 			j loop # infinite loop; n*3 (delay instructions) + 5 (non-delay instructions).
-
+			
 --			Counter Program
 			x"3c090000",
 			x"35290001",
@@ -223,18 +223,18 @@ end process;
 ----------------------------------------------------------------
 -- Clock divider
 ----------------------------------------------------------------
--- CLK <= CLK_undiv;
+ CLK <= CLK_undiv;
 -- IMPORTANT : >>> uncomment the previous line and comment out the rest of the process
 --					>>> for SIMULATION or for obtaining a 100MHz clock frequency
-CLK_DIV_PROCESS : process(CLK_undiv)
-variable clk_counter : std_logic_vector(CLK_DIV_BITS-1 downto 0) := (others => '0');
-begin
-	if CLK_undiv'event and CLK_undiv = '1' then
-		clk_counter := clk_counter+1;
-		CLK <= clk_counter(CLK_DIV_BITS-1);
-	end if;
-end process;
-
+--CLK_DIV_PROCESS : process(CLK_undiv)
+--variable clk_counter : std_logic_vector(CLK_DIV_BITS-1 downto 0) := (others => '0');
+--begin
+--	if CLK_undiv'event and CLK_undiv = '1' then
+--		clk_counter := clk_counter+1;
+--		CLK <= clk_counter(CLK_DIV_BITS-1);
+--	end if;
+--end process;
+--
 end arch_TOP;
 
 ----------------------------------------------------------------	
