@@ -54,7 +54,7 @@ architecture arch_TOP of TOP is
 ----------------------------------------------------------------
 -- Constants
 ----------------------------------------------------------------
-constant CLK_DIV_BITS	: integer := 1; --26 for a clock of the order of 1Hz. Changed in top.vhd_v2 : use (CLK_DIV_BITS of top.vhd_v2)+1. 
+constant CLK_DIV_BITS	: integer := 26; --26 for a clock of the order of 1Hz. Changed in top.vhd_v2 : use (CLK_DIV_BITS of top.vhd_v2)+1. 
 -- 1 for a 50MHz clock.
 -- See the notes in CLK_DIV_PROCESS for SIMULATION or for obtaining a 100MHz clock frequency, 
 constant N_LEDs			: integer := 8;
@@ -234,7 +234,7 @@ end process;
 --		CLK <= clk_counter(CLK_DIV_BITS-1);
 --	end if;
 --end process;
---
+
 end arch_TOP;
 
 ----------------------------------------------------------------	

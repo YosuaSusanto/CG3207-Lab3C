@@ -833,7 +833,7 @@ ALU_Func <= "00110" when IDEX_ALUOpOut = "001" else									-- add when branch
 				
 ALU_Control <= RESET & ALU_Func;	
 
-EX_Result <= IDEX_SignExtendedOut(15 downto 0) & x"0000" when InstrtoReg = '1' else		-- LUI
+EX_Result <= (IDEX_SignExtendedOut(15 downto 0) & x"0000") when InstrtoReg = '1' else		-- LUI
 				 ALU_Result1;
 
 -- Input for RegHiLo
