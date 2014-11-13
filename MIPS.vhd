@@ -830,6 +830,7 @@ ALU_Func <= "00110" when IDEX_ALUOpOut = "001" else									-- add when branch
 				"00010" when IDEX_ALUOpOut = "000" else									-- add when lw, sw, addiu, addi
 				"00001" when IDEX_ALUOpOut = "011" else				 					-- or when ori
 				"00111" when IDEX_ALUOpOut = "101" else									-- slt for slti and bgez
+				"11111" when IDEX_ALUOpOut = "110" or IDEX_ALUOpOut = "100" or IDEX_ALUOpOut = "111" else 	-- LUI and unknown ALUOp
 				"00000" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "100100" else		-- and
 				"00001" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "100101" else		-- or
 				"01100" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "100111" else		-- nor
@@ -848,7 +849,7 @@ ALU_Func <= "00110" when IDEX_ALUOpOut = "001" else									-- add when branch
 				"10001" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "011001" else		-- multu
 				"10010" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "011010" else		-- div
 				"10011" when IDEX_ALUOpOut = "010" and IDEX_SignExtendedOut(5 downto 0) = "011011" else		-- divu
-				"XXXXX";																													-- unknown operation
+				"11111";																													-- unknown operation
 				
 ALU_Control <= RESET & ALU_Func;	
 

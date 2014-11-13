@@ -85,7 +85,7 @@ begin
 			RegWrite <= '0';
 			RegDst <= 'X';
 		when "001111" => -- LUI
-			ALUOp <= "XXX";
+			ALUOp <= "110";
 			Branch <= '0';
 			Jump <= '0';
 			MemRead <= '0';
@@ -176,7 +176,7 @@ begin
 			RegWrite <= '0';
 			RegDst <= 'X';
 		when "000010" => -- J
-			ALUOp <= "XXX";
+			ALUOp <= "111";
 			Branch <= '0';
 			Jump <= '1';
 			MemRead <= '0';
@@ -189,7 +189,7 @@ begin
 			RegWrite <= '0';
 			RegDst <= 'X';
 		when "000011" => -- JAL
-			ALUOp <= "XXX";
+			ALUOp <= "111";
 			Branch <= '0';
 			Jump <= '1';
 			MemRead <= '0';
@@ -203,7 +203,7 @@ begin
 			RegDst <= 'X';
 		
 		when "010000" => -- MFC0 & MTC0 & ERET
-			ALUOp <= "XXX";
+			ALUOp <= "111";
 			Branch <= '0';
 			Jump <= '0';
 			MemRead <= '0';
@@ -217,7 +217,7 @@ begin
 			RegDst <= '0';
 			
 		when others =>
-			ALUOp <= "XXX";
+			ALUOp <= "111";
 			Branch <= '0';
 			Jump <= '0';
 			MemRead <= '0';
