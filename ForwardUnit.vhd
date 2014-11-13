@@ -54,7 +54,7 @@ begin
 								 (MEMWB_RegRd = IDEX_RegRs)) else
 					"00";
 	ForwardB <= "10" when (EXMEM_RegWrite = '1' and 
-								 (EXMEM_RegRd = "00000") and 
+								 (EXMEM_RegRd /= "00000") and 
 								 (EXMEM_RegRd = IDEX_RegRt)) else 
 					"01" when (MEMWB_RegWrite = '1' and 
 								 (MEMWB_RegRd /= "00000") and 
