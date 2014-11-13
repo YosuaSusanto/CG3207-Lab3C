@@ -86,7 +86,7 @@ Temporary Items
 *.log
 *.cmd
 *.bgn
-*.bit
+top.bit
 *.drc
 *.exe
 *.wdb
