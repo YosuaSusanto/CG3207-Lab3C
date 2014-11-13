@@ -158,8 +158,10 @@ case state is
 			overflow := ( ALU_InA(width-1) xor  ALU_InB(width-1) )  and ( ALU_InB(width-1) xnor S(width-1) );
 			if (overflow = '1' and S(width-1) = '0') or (overflow = '0' and S(width-1)='1') then
 				ALU_Result1 <= x"00000001";
+				ALU_Status(0) <= '0';
 			else
 				ALU_Result1 <= x"00000000";
+				ALU_Status(0) <= '1';
 			end if;
 		
 		-- SLTU, SLTIU
